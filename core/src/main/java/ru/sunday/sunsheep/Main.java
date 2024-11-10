@@ -5,21 +5,23 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private Texture image;
-    Sheep[] sheep = new Sheep[3];
+    Sheep[] sheep = new Sheep[3333];
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         image = new Texture("sheep0.png");
-        sheep[0] = new Sheep(10, 50, 100, 100);
-        sheep[1] = new Sheep(400, 300, 80, 80);
-        sheep[2] = new Sheep(800, 300, 150, 150);
+        for (int i = 0; i < sheep.length; i++) {
+            float wh = MathUtils.random(30, 100);
+            sheep[i] = new Sheep(1280/2, 720/2, wh, wh);
+        }
     }
 
     @Override

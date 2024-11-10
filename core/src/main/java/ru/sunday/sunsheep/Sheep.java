@@ -1,18 +1,22 @@
 package ru.sunday.sunsheep;
 
+import com.badlogic.gdx.math.MathUtils;
+
 public class Sheep {
-    float x;
-    float y;
-    float width;
-    float height;
-    float stepX = 5;
-    float stepY = 5;
+    public float x;
+    public float y;
+    public float width;
+    public float height;
+    private float stepX;
+    private float stepY;
 
     public Sheep(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
+        stepX = MathUtils.random(-5f, 5);
+        stepY = MathUtils.random(-5f, 5);
     }
 
     void fly(){
