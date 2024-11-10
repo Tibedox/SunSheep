@@ -1,12 +1,19 @@
 package ru.sunday.sunsheep;
 
 public class Sheep {
-    float x = 140;
-    float y = 210;
+    float x;
+    float y;
+    float width;
+    float height;
     float stepX = 5;
     float stepY = 5;
-    float width = 300;
-    float height = 300;
+
+    public Sheep(float x, float y, float width, float height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 
     void fly(){
         x += stepX;
