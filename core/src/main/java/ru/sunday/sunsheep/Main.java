@@ -20,6 +20,7 @@ public class Main extends ApplicationAdapter {
         batch = new SpriteBatch();
         imgSheep = new Texture("sheep0.png");
         imgPig = new Texture("pig0.png");
+
         for (int i = 0; i < sheep.length; i++) {
             float wh = MathUtils.random(30, 100);
             sheep[i] = new Sheep(1280/2, 720/2, wh, wh);

@@ -8,6 +8,5 @@ public class Pig extends Animal{
 
     @Override
     void say() {
-
     }
 }
