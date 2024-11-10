@@ -2,7 +2,7 @@ package ru.sunday.sunsheep;
 
 import com.badlogic.gdx.math.MathUtils;
 
-public class Animal {
+public abstract class Animal {
     public float x;
     public float y;
     public float width;
@@ -25,4 +25,6 @@ public class Animal {
         if(x<0 || x>1280-width) stepX = -stepX;
         if(y<0 || y>720-height) stepY = -stepY;
     }
+
+    abstract void say();
 }
