@@ -26,7 +26,7 @@ public class Main extends ApplicationAdapter {
         }
         for (int i = 0; i < pig.length; i++) {
             float wh = MathUtils.random(50, 120);
-            pig[i] = new Pig(1280/2, 720/2, wh, wh);
+            pig[i] = new Pig(0, 0, wh, wh);
         }
     }
 
