@@ -1,6 +1,8 @@
 package ru.sunday.sunsheep;
 
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -9,25 +11,34 @@ import com.badlogic.gdx.utils.ScreenUtils;
 public class Main extends ApplicationAdapter {
     public static final float SCR_WIDTH = 1280;
     public static final float SCR_HEIGHT = 720;
+
     private SpriteBatch batch;
+
     private Texture imgSheep, imgPig;
     private Texture imgBackGround;
-    Sheep[] sheep = new Sheep[33];
-    Pig[] pig = new Pig[22];
+    private Sound sndSheep;
+    private Sound sndPig;
+
+    Sheep[] sheep = new Sheep[3];
+    Pig[] pig = new Pig[12];
 
     @Override
     public void create() {
         batch = new SpriteBatch();
+
         imgBackGround = new Texture("field.png");
         imgSheep = new Texture("sheep0.png");
         imgPig = new Texture("pig0.png");
+        sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
+        sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig2.mp3"));
+
         for (int i = 0; i < sheep.length; i++) {
             float wh = MathUtils.random(30, 100);
-            sheep[i] = new Sheep(SCR_WIDTH/2, SCR_HEIGHT/2, wh, wh, imgSheep);
+            sheep[i] = new Sheep(SCR_WIDTH/2, SCR_HEIGHT/2, wh, wh, imgSheep, sndSheep);
         }
         for (int i = 0; i < pig.length; i++) {
             float wh = MathUtils.random(50, 120);
-            pig[i] = new Pig(0, 0, wh, wh, imgPig);
+            pig[i] = new Pig(0, 0, wh, wh, imgPig, sndPig);
         }
     }
 
