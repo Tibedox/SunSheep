@@ -31,12 +31,16 @@ public abstract class Animal {
         x += stepX;
         y += stepY;
         if(x<0 || x>SCR_WIDTH-width) {
-            snd.play();
+            //snd.play();
             stepX = -stepX;
         }
         if(y<0 || y>SCR_HEIGHT-height) {
             stepY = -stepY;
         }
+    }
+
+    boolean hit(float tx, float ty){
+        return x<tx && tx<x+width && y<ty && ty<y+height;
     }
 
     abstract void say();

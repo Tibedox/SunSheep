@@ -3,9 +3,11 @@ package ru.sunday.sunsheep;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
@@ -13,6 +15,8 @@ public class Main extends ApplicationAdapter {
     public static final float SCR_HEIGHT = 720;
 
     private SpriteBatch batch;
+    private OrthographicCamera camera;
+    private Vector3 touch;
 
     private Texture imgSheep, imgPig;
     private Texture imgBackGround;
@@ -25,6 +29,9 @@ public class Main extends ApplicationAdapter {
     @Override
     public void create() {
         batch = new SpriteBatch();
+        camera = new OrthographicCamera();
+        camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
+        touch = new Vector3();
 
         imgBackGround = new Texture("field.png");
         imgSheep = new Texture("sheep0.png");
@@ -44,6 +51,23 @@ public class Main extends ApplicationAdapter {
 
     @Override
     public void render() {
+        // касания
+        if(Gdx.input.justTouched()){
+            touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
+            camera.unproject(touch);
+            for (int i = 0; i < sheep.length; i++) {
+                if(sheep[i].hit(touch.x, touch.y)){
+                    sndSheep.play();
+                }
+            }
+            for (int i = 0; i < pig.length; i++) {
+                if(pig[i].hit(touch.x, touch.y)){
+                    sndPig.play();
+                }
+            }
+        }
+
+        // события
         for (int i = 0; i < sheep.length; i++) {
             sheep[i].fly();
         }
@@ -51,7 +75,8 @@ public class Main extends ApplicationAdapter {
             pig[i].fly();
         }
 
-        ScreenUtils.clear(0.45f, 0.15f, 0.2f, 1f);
+        // отрисовка
+        batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         for (int i = 0; i < sheep.length; i++) {
