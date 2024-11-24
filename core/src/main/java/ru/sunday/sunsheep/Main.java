@@ -36,7 +36,7 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
-        font = new BitmapFont();
+        font = new BitmapFont(Gdx.files.internal("comic50.fnt"));
 
         imgBackGround = new Texture("farm.jpg");
         imgSheep = new Texture("sheep0.png");
