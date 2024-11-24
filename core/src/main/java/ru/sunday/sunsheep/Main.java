@@ -28,6 +28,7 @@ public class Main extends ApplicationAdapter {
 
     Sheep[] sheep = new Sheep[13];
     Pig[] pig = new Pig[12];
+    int count;
 
     @Override
     public void create() {
@@ -35,6 +36,7 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
+        font = new BitmapFont();
 
         imgBackGround = new Texture("farm.jpg");
         imgSheep = new Texture("sheep0.png");
@@ -63,12 +65,14 @@ public class Main extends ApplicationAdapter {
                 if (s.hit(touch.x, touch.y)) {
                     s.snd.play();
                     s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
+                    count++;
                 }
             }
             for (Pig p : pig) {
                 if(p.hit(touch.x, touch.y)){
                     p.snd.play();
                     p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
+                    count++;
                 }
             }
         }
@@ -91,6 +95,7 @@ public class Main extends ApplicationAdapter {
         for (Pig p: pig) {
             batch.draw(p.img, p.x, p.y, p.width, p.height);
         }
+        font.draw(batch, "SCORE: "+count, 10, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -102,5 +107,6 @@ public class Main extends ApplicationAdapter {
         imgBackGround.dispose();
         sndSheep.dispose();
         sndPig.dispose();
+        font.dispose();
     }
 }
