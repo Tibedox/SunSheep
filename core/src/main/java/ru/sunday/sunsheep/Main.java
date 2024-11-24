@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.TimeUtils;
 
 public class Main extends ApplicationAdapter {
     public static final float SCR_WIDTH = 1600;
@@ -29,6 +30,7 @@ public class Main extends ApplicationAdapter {
     Sheep[] sheep = new Sheep[13];
     Pig[] pig = new Pig[12];
     int count;
+    long timeStartGame;
 
     @Override
     public void create() {
@@ -52,6 +54,7 @@ public class Main extends ApplicationAdapter {
             float wh = MathUtils.random(50, 120);
             pig[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
         }
+        timeStartGame = TimeUtils.millis();
     }
 
     @Override
@@ -96,6 +99,7 @@ public class Main extends ApplicationAdapter {
             batch.draw(p.img, p.x, p.y, p.width, p.height);
         }
         font.draw(batch, "SCORE: "+count, 10, SCR_HEIGHT-10);
+        font.draw(batch, showTime(), SCR_WIDTH-250, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -108,5 +112,13 @@ public class Main extends ApplicationAdapter {
         sndSheep.dispose();
         sndPig.dispose();
         font.dispose();
+    }
+
+    String showTime(){
+        long time = TimeUtils.millis()-timeStartGame;
+        long sec = time/1000%60;
+        long min = time/1000/60%60;
+        long hour = time/1000/60/60;
+        return hour+":"+min/10+min%10+":"+sec/10+sec%10;
     }
 }
