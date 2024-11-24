@@ -32,16 +32,15 @@ public abstract class Animal {
     }
 
     void fly(){
-        if(!isCatched) {
-            x += stepX;
-            y += stepY;
-            if (x < 0 || x > SCR_WIDTH - width) {
-                stepX = -stepX;
-            }
-            if (y < 0 || y > SCR_HEIGHT - height) {
-                stepY = -stepY;
-            }
-        } else {
+        x += stepX;
+        y += stepY;
+        if (x < 0 || x > SCR_WIDTH - width) {
+            stepX = -stepX;
+        }
+        if (y < 0 || y > SCR_HEIGHT - height) {
+            stepY = -stepY;
+        }
+        if(isCatched) {
             width -= reSize;
             height -= reSize;
             if(homeX-Math.abs(stepX)<x && x<homeX+Math.abs(stepX)){
