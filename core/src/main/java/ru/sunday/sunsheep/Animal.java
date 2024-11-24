@@ -15,7 +15,9 @@ public abstract class Animal {
     private float stepY;
     public Texture img;
     public Sound snd;
-    float targetX, targetY;
+    float homeX, homeY;
+    float speedGoHome = 20;
+    float reSize;
     boolean isCatched;
 
     public Animal(float x, float y, float width, float height, Texture img, Sound snd) {
@@ -30,18 +32,24 @@ public abstract class Animal {
     }
 
     void fly(){
-        x += stepX;
-        y += stepY;
-        if(x<0 || x>SCR_WIDTH-width) {
-            stepX = -stepX;
-        }
-        if(y<0 || y>SCR_HEIGHT-height) {
-            stepY = -stepY;
-        }
-        if(isCatched) {
-            if(targetX-Math.abs(stepX)<x && x<targetX+Math.abs(stepX)){
+        if(!isCatched) {
+            x += stepX;
+            y += stepY;
+            if (x < 0 || x > SCR_WIDTH - width) {
+                stepX = -stepX;
+            }
+            if (y < 0 || y > SCR_HEIGHT - height) {
+                stepY = -stepY;
+            }
+        } else {
+            width -= reSize;
+            height -= reSize;
+            if(homeX-Math.abs(stepX)<x && x<homeX+Math.abs(stepX)){
                 stepX = 0;
                 stepY = 0;
+                reSize = 0;
+                width = 0;
+                height = 0;
             }
         }
     }
@@ -50,11 +58,12 @@ public abstract class Animal {
         return x<tx && tx<x+width && y<ty && ty<y+height;
     }
 
-    void catched(float targetX, float targetY){
-        this.targetX = targetX;
-        this.targetY = targetY;
+    void catched(float homeX, float homeY){
+        this.homeX = homeX;
+        this.homeY = homeY;
         isCatched = true;
-        stepX = (targetX - x)/10;
-        stepY = (targetY - y)/10;
+        stepX = (homeX - x)/speedGoHome;
+        stepY = (homeY - y)/speedGoHome;
+        reSize = width/speedGoHome;
     }
 }
