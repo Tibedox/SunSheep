@@ -14,7 +14,9 @@ public abstract class Animal {
     private float stepX;
     private float stepY;
     public Texture img;
-    private Sound snd;
+    public Sound snd;
+    float targetX, targetY;
+    boolean isCatched;
 
     public Animal(float x, float y, float width, float height, Texture img, Sound snd) {
         this.x = x;
@@ -31,11 +33,16 @@ public abstract class Animal {
         x += stepX;
         y += stepY;
         if(x<0 || x>SCR_WIDTH-width) {
-            //snd.play();
             stepX = -stepX;
         }
         if(y<0 || y>SCR_HEIGHT-height) {
             stepY = -stepY;
+        }
+        if(isCatched) {
+            if(targetX-Math.abs(stepX)<x && x<targetX+Math.abs(stepX)){
+                stepX = 0;
+                stepY = 0;
+            }
         }
     }
 
@@ -43,5 +50,11 @@ public abstract class Animal {
         return x<tx && tx<x+width && y<ty && ty<y+height;
     }
 
-    abstract void say();
+    void catched(float targetX, float targetY){
+        this.targetX = targetX;
+        this.targetY = targetY;
+        isCatched = true;
+        stepX = (targetX - x)/10;
+        stepY = (targetY - y)/10;
+    }
 }

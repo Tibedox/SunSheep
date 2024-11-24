@@ -56,15 +56,17 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-            System.out.println(touch.x+" "+ touch.y);
+
             for (Sheep s : sheep) {
                 if (s.hit(touch.x, touch.y)) {
-                    sndSheep.play();
+                    s.snd.play();
+                    s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
                 }
             }
             for (Pig p : pig) {
                 if(p.hit(touch.x, touch.y)){
-                    sndPig.play();
+                    p.snd.play();
+                    p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
                 }
             }
         }

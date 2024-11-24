@@ -8,9 +8,4 @@ public class Pig extends Animal{
     public Pig(float x, float y, float width, float height, Texture img, Sound snd) {
         super(x, y, width, height, img, snd);
     }
-
-    @Override
-    void say() {
-
-    }
 }
