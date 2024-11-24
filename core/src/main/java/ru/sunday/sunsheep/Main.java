@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.utils.ScreenUtils;
 
 public class Main extends ApplicationAdapter {
-    public static final float SCR_WIDTH = 1280;
-    public static final float SCR_HEIGHT = 720;
+    public static final float SCR_WIDTH = 1600;
+    public static final float SCR_HEIGHT = 900;
+    public static final float SPAWN_SHEEP_X = 580, SPAWN_SHEEP_Y = 426;
+    public static final float SPAWN_PIG_X = 876, SPAWN_PIG_Y = 422;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
@@ -23,7 +24,7 @@ public class Main extends ApplicationAdapter {
     private Sound sndSheep;
     private Sound sndPig;
 
-    Sheep[] sheep = new Sheep[3];
+    Sheep[] sheep = new Sheep[13];
     Pig[] pig = new Pig[12];
 
     @Override
@@ -33,7 +34,7 @@ public class Main extends ApplicationAdapter {
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
 
-        imgBackGround = new Texture("field.png");
+        imgBackGround = new Texture("farm.jpg");
         imgSheep = new Texture("sheep0.png");
         imgPig = new Texture("pig0.png");
         sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
@@ -41,11 +42,11 @@ public class Main extends ApplicationAdapter {
 
         for (int i = 0; i < sheep.length; i++) {
             float wh = MathUtils.random(30, 100);
-            sheep[i] = new Sheep(SCR_WIDTH/2, SCR_HEIGHT/2, wh, wh, imgSheep, sndSheep);
+            sheep[i] = new Sheep(SPAWN_SHEEP_X, SPAWN_SHEEP_Y, wh, wh, imgSheep, sndSheep);
         }
         for (int i = 0; i < pig.length; i++) {
             float wh = MathUtils.random(50, 120);
-            pig[i] = new Pig(0, 0, wh, wh, imgPig, sndPig);
+            pig[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
         }
     }
 
@@ -55,35 +56,36 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-            for (int i = 0; i < sheep.length; i++) {
-                if(sheep[i].hit(touch.x, touch.y)){
+            System.out.println(touch.x+" "+ touch.y);
+            for (Sheep s : sheep) {
+                if (s.hit(touch.x, touch.y)) {
                     sndSheep.play();
                 }
             }
-            for (int i = 0; i < pig.length; i++) {
-                if(pig[i].hit(touch.x, touch.y)){
+            for (Pig p : pig) {
+                if(p.hit(touch.x, touch.y)){
                     sndPig.play();
                 }
             }
         }
 
         // события
-        for (int i = 0; i < sheep.length; i++) {
-            sheep[i].fly();
+        for (Sheep s: sheep) {
+            s.fly();
         }
-        for (int i = 0; i < pig.length; i++) {
-            pig[i].fly();
+        for (Pig p: pig) {
+            p.fly();
         }
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (int i = 0; i < sheep.length; i++) {
-            batch.draw(sheep[i].img, sheep[i].x, sheep[i].y, sheep[i].width, sheep[i].height);
+        for (Sheep s: sheep) {
+            batch.draw(s.img, s.x, s.y, s.width, s.height);
         }
-        for (int i = 0; i < pig.length; i++) {
-            batch.draw(pig[i].img, pig[i].x, pig[i].y, pig[i].width, pig[i].height);
+        for (Pig p: pig) {
+            batch.draw(p.img, p.x, p.y, p.width, p.height);
         }
         batch.end();
     }
@@ -93,5 +95,8 @@ public class Main extends ApplicationAdapter {
         batch.dispose();
         imgSheep.dispose();
         imgPig.dispose();
+        imgBackGround.dispose();
+        sndSheep.dispose();
+        sndPig.dispose();
     }
 }
