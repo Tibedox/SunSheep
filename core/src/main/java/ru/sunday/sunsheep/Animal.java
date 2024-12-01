@@ -63,6 +63,6 @@ public abstract class Animal {
         isCatched = true;
         stepX = (homeX - x)/speedGoHome;
         stepY = (homeY - y)/speedGoHome;
-        reSize = width/speedGoHome;
+        reSize = width/speedGoHome/2;
     }
 }

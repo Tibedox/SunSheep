@@ -27,10 +27,12 @@ public class Main extends ApplicationAdapter {
     private Sound sndSheep;
     private Sound sndPig;
 
-    Sheep[] sheep = new Sheep[13];
-    Pig[] pig = new Pig[12];
-    int count;
+    Sheep[] sheep = new Sheep[3];
+    Pig[] pig = new Pig[2];
+    int countAnimals;
     long timeStartGame;
+    long timeCurrent;
+    boolean isGameOver;
 
     @Override
     public void create() {
@@ -68,38 +70,36 @@ public class Main extends ApplicationAdapter {
                 if (s.hit(touch.x, touch.y)) {
                     s.snd.play();
                     s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
-                    count++;
+                    countAnimals++;
                 }
             }
             for (Pig p : pig) {
                 if(p.hit(touch.x, touch.y)){
                     p.snd.play();
                     p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
-                    count++;
+                    countAnimals++;
                 }
             }
         }
 
         // события
-        for (Sheep s: sheep) {
-            s.fly();
+        for (Sheep s: sheep) s.fly();
+        for (Pig p: pig) p.fly();
+        if(countAnimals == sheep.length+pig.length){
+            isGameOver = true;
         }
-        for (Pig p: pig) {
-            p.fly();
+        if(!isGameOver) {
+            timeCurrent = TimeUtils.millis() - timeStartGame;
         }
 
         // отрисовка
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (Sheep s: sheep) {
-            batch.draw(s.img, s.x, s.y, s.width, s.height);
-        }
-        for (Pig p: pig) {
-            batch.draw(p.img, p.x, p.y, p.width, p.height);
-        }
-        font.draw(batch, "SCORE: "+count, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(), SCR_WIDTH-250, SCR_HEIGHT-10);
+        for (Sheep s: sheep) batch.draw(s.img, s.x, s.y, s.width, s.height);
+        for (Pig p: pig) batch.draw(p.img, p.x, p.y, p.width, p.height);
+        font.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-295, SCR_HEIGHT-10);
         batch.end();
     }
 
@@ -114,11 +114,11 @@ public class Main extends ApplicationAdapter {
         font.dispose();
     }
 
-    String showTime(){
-        long time = TimeUtils.millis()-timeStartGame;
+    String showTime(long time){
+        long msec = time%1000/100;
         long sec = time/1000%60;
         long min = time/1000/60%60;
         long hour = time/1000/60/60;
-        return hour+":"+min/10+min%10+":"+sec/10+sec%10;
+        return hour+":"+min/10+min%10+":"+sec/10+sec%10+"."+msec;
     }
 }
