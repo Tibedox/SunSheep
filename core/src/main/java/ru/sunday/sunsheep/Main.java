@@ -89,12 +89,11 @@ public class Main extends ApplicationAdapter {
         // события
         for (Sheep s: sheeps) s.fly();
         for (Pig p: pigs) p.fly();
-        if(countAnimals == sheeps.length+ pigs.length){
-            isGameOver = true;
-            players[players.length-1].set("Winner", timeCurrent);
-        }
         if(!isGameOver) {
             timeCurrent = TimeUtils.millis() - timeStartGame;
+            if(countAnimals == sheeps.length+pigs.length) {
+                gameOver();
+            }
         }
 
         // отрисовка
@@ -104,7 +103,7 @@ public class Main extends ApplicationAdapter {
         for (Sheep s: sheeps) batch.draw(s.img, s.x, s.y, s.width, s.height);
         for (Pig p: pigs) batch.draw(p.img, p.x, p.y, p.width, p.height);
         font.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-200, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-230, SCR_HEIGHT-10);
         if(isGameOver){
             for (int i = 0; i < players.length-1; i++) {
                 font.draw(batch, players[i].name, 600, 650-i*90);
@@ -131,5 +130,33 @@ public class Main extends ApplicationAdapter {
         long min = time/1000/60%60;
         //long hour = time/1000/60/60;
         return ""+min/10+min%10+":"+sec/10+sec%10+"."+msec;
+    }
+
+    void gameOver(){
+        isGameOver = true;
+        players[players.length-1].set("Winner", timeCurrent);
+        sortPlayers();
+    }
+
+    void sortPlayers(){
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].time == 0){
+                players[i].time = Long.MAX_VALUE;
+            }
+        }
+        for (int j = 0; j < players.length; j++) {
+            for (int i = 0; i < players.length-1; i++) {
+                if(players[i].time>players[i+1].time){
+                    Player tmp = players[i];
+                    players[i] = players[i+1];
+                    players[i+1] = tmp;
+                }
+            }
+        }
+        for (int i = 0; i < players.length; i++) {
+            if(players[i].time == Long.MAX_VALUE){
+                players[i].time = 0;
+            }
+        }
     }
 }
