@@ -27,8 +27,9 @@ public class Main extends ApplicationAdapter {
     private Sound sndSheep;
     private Sound sndPig;
 
-    Sheep[] sheep = new Sheep[3];
-    Pig[] pig = new Pig[2];
+    Sheep[] sheeps = new Sheep[3];
+    Pig[] pigs = new Pig[2];
+    Player[] players = new Player[6];
     int countAnimals;
     long timeStartGame;
     long timeCurrent;
@@ -48,13 +49,16 @@ public class Main extends ApplicationAdapter {
         sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig2.mp3"));
 
-        for (int i = 0; i < sheep.length; i++) {
+        for (int i = 0; i < sheeps.length; i++) {
             float wh = MathUtils.random(30, 100);
-            sheep[i] = new Sheep(SPAWN_SHEEP_X, SPAWN_SHEEP_Y, wh, wh, imgSheep, sndSheep);
+            sheeps[i] = new Sheep(SPAWN_SHEEP_X, SPAWN_SHEEP_Y, wh, wh, imgSheep, sndSheep);
         }
-        for (int i = 0; i < pig.length; i++) {
+        for (int i = 0; i < pigs.length; i++) {
             float wh = MathUtils.random(50, 120);
-            pig[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
+            pigs[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
+        }
+        for (int i = 0; i < players.length; i++) {
+            players[i] = new Player("Noname", 0);
         }
         timeStartGame = TimeUtils.millis();
     }
@@ -66,14 +70,14 @@ public class Main extends ApplicationAdapter {
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
 
-            for (Sheep s : sheep) {
+            for (Sheep s : sheeps) {
                 if (s.hit(touch.x, touch.y)) {
                     s.snd.play();
                     s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
                     countAnimals++;
                 }
             }
-            for (Pig p : pig) {
+            for (Pig p : pigs) {
                 if(p.hit(touch.x, touch.y)){
                     p.snd.play();
                     p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
@@ -83,10 +87,11 @@ public class Main extends ApplicationAdapter {
         }
 
         // события
-        for (Sheep s: sheep) s.fly();
-        for (Pig p: pig) p.fly();
-        if(countAnimals == sheep.length+pig.length){
+        for (Sheep s: sheeps) s.fly();
+        for (Pig p: pigs) p.fly();
+        if(countAnimals == sheeps.length+ pigs.length){
             isGameOver = true;
+            players[players.length-1].set("Winner", timeCurrent);
         }
         if(!isGameOver) {
             timeCurrent = TimeUtils.millis() - timeStartGame;
@@ -96,10 +101,16 @@ public class Main extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
-        for (Sheep s: sheep) batch.draw(s.img, s.x, s.y, s.width, s.height);
-        for (Pig p: pig) batch.draw(p.img, p.x, p.y, p.width, p.height);
+        for (Sheep s: sheeps) batch.draw(s.img, s.x, s.y, s.width, s.height);
+        for (Pig p: pigs) batch.draw(p.img, p.x, p.y, p.width, p.height);
         font.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-295, SCR_HEIGHT-10);
+        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-200, SCR_HEIGHT-10);
+        if(isGameOver){
+            for (int i = 0; i < players.length-1; i++) {
+                font.draw(batch, players[i].name, 600, 650-i*90);
+                font.draw(batch, showTime(players[i].time), 1000, 650-i*90);
+            }
+        }
         batch.end();
     }
 
@@ -118,7 +129,7 @@ public class Main extends ApplicationAdapter {
         long msec = time%1000/100;
         long sec = time/1000%60;
         long min = time/1000/60%60;
-        long hour = time/1000/60/60;
-        return hour+":"+min/10+min%10+":"+sec/10+sec%10+"."+msec;
+        //long hour = time/1000/60/60;
+        return ""+min/10+min%10+":"+sec/10+sec%10+"."+msec;
     }
 }
