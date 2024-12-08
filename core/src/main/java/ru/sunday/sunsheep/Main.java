@@ -29,6 +29,8 @@ public class Main extends ApplicationAdapter {
     private Sound sndSheep;
     private Sound sndPig;
 
+    SunButton btnRestart;
+
     Sheep[] sheeps = new Sheep[3];
     Pig[] pigs = new Pig[2];
     Player[] players = new Player[6];
@@ -51,6 +53,8 @@ public class Main extends ApplicationAdapter {
         imgPig = new Texture("pig0.png");
         sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig2.mp3"));
+
+        btnRestart = new SunButton("RESTART", font50, 680, 150);
 
         for (int i = 0; i < sheeps.length; i++) {
             float wh = MathUtils.random(30, 100);
@@ -88,6 +92,11 @@ public class Main extends ApplicationAdapter {
                     countAnimals++;
                 }
             }
+            if(isGameOver){
+                if(btnRestart.hit(touch.x, touch.y)){
+
+                }
+            }
         }
 
         // события
@@ -114,6 +123,7 @@ public class Main extends ApplicationAdapter {
                 font50.draw(batch, players[i].name, 470, 650-i*90);
                 font50.draw(batch, showTime(players[i].time), 900, 650-i*90);
             }
+            btnRestart.font.draw(batch, btnRestart.text, btnRestart.x, btnRestart.y);
         }
         batch.end();
     }
@@ -179,8 +189,8 @@ public class Main extends ApplicationAdapter {
     void loadTableOfRecords(){
         Preferences prefs = Gdx.app.getPreferences("SunSheepPrefs");
         for (int i = 0; i < players.length; i++) {
-            players[i].name = prefs.getString("name"+i);
-            players[i].time = prefs.getLong("time"+i);
+            players[i].name = prefs.getString("name"+i, "Noname");
+            players[i].time = prefs.getLong("time"+i, 0);
         }
     }
 }
