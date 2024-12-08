@@ -2,6 +2,7 @@ package ru.sunday.sunsheep;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -62,6 +63,7 @@ public class Main extends ApplicationAdapter {
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
         }
+        loadTableOfRecords();
         timeStartGame = TimeUtils.millis();
     }
 
@@ -139,10 +141,11 @@ public class Main extends ApplicationAdapter {
     void gameOver(){
         isGameOver = true;
         players[players.length-1].set("Winner", timeCurrent);
-        sortPlayers();
+        sortTableOfRecords();
+        saveTableOfRecords();
     }
 
-    void sortPlayers(){
+    void sortTableOfRecords(){
         for (int i = 0; i < players.length; i++) {
             if(players[i].time == 0){
                 players[i].time = Long.MAX_VALUE;
@@ -164,5 +167,20 @@ public class Main extends ApplicationAdapter {
         }
     }
 
+    void saveTableOfRecords(){
+        Preferences prefs = Gdx.app.getPreferences("SunSheepPrefs");
+        for (int i = 0; i < players.length; i++) {
+            prefs.putString("name"+i, players[i].name);
+            prefs.putLong("time"+i, players[i].time);
+        }
+        prefs.flush();
+    }
 
+    void loadTableOfRecords(){
+        Preferences prefs = Gdx.app.getPreferences("SunSheepPrefs");
+        for (int i = 0; i < players.length; i++) {
+            players[i].name = prefs.getString("name"+i);
+            players[i].time = prefs.getLong("time"+i);
+        }
+    }
 }
