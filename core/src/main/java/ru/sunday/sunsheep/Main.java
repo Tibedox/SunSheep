@@ -30,9 +30,10 @@ public class Main extends ApplicationAdapter {
     private Sound sndPig;
 
     SunButton btnRestart;
+    SunButton btnClear;
 
-    Sheep[] sheeps = new Sheep[3];
-    Pig[] pigs = new Pig[2];
+    Sheep[] sheeps = new Sheep[33];
+    Pig[] pigs = new Pig[22];
     Player[] players = new Player[6];
     int countAnimals;
     long timeStartGame;
@@ -54,21 +55,14 @@ public class Main extends ApplicationAdapter {
         sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig2.mp3"));
 
-        btnRestart = new SunButton("RESTART", font50, 680, 150);
+        btnRestart = new SunButton("Restart", font70, 680, 150);
+        btnClear = new SunButton("clear", font50, 750, 230);
 
-        for (int i = 0; i < sheeps.length; i++) {
-            float wh = MathUtils.random(30, 100);
-            sheeps[i] = new Sheep(SPAWN_SHEEP_X, SPAWN_SHEEP_Y, wh, wh, imgSheep, sndSheep);
-        }
-        for (int i = 0; i < pigs.length; i++) {
-            float wh = MathUtils.random(50, 120);
-            pigs[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
-        }
         for (int i = 0; i < players.length; i++) {
             players[i] = new Player("Noname", 0);
         }
         loadTableOfRecords();
-        timeStartGame = TimeUtils.millis();
+        gameRestart();
     }
 
     @Override
@@ -94,7 +88,7 @@ public class Main extends ApplicationAdapter {
             }
             if(isGameOver){
                 if(btnRestart.hit(touch.x, touch.y)){
-
+                    gameRestart();
                 }
             }
         }
@@ -124,6 +118,7 @@ public class Main extends ApplicationAdapter {
                 font50.draw(batch, showTime(players[i].time), 900, 650-i*90);
             }
             btnRestart.font.draw(batch, btnRestart.text, btnRestart.x, btnRestart.y);
+            btnClear.font.draw(batch, btnClear.text, btnClear.x, btnClear.y);
         }
         batch.end();
     }
@@ -153,6 +148,20 @@ public class Main extends ApplicationAdapter {
         players[players.length-1].set("Winner", timeCurrent);
         sortTableOfRecords();
         saveTableOfRecords();
+    }
+
+    void gameRestart(){
+        isGameOver = false;
+        countAnimals = 0;
+        for (int i = 0; i < sheeps.length; i++) {
+            float wh = MathUtils.random(30, 100);
+            sheeps[i] = new Sheep(SPAWN_SHEEP_X, SPAWN_SHEEP_Y, wh, wh, imgSheep, sndSheep);
+        }
+        for (int i = 0; i < pigs.length; i++) {
+            float wh = MathUtils.random(50, 120);
+            pigs[i] = new Pig(SPAWN_PIG_X, SPAWN_PIG_Y, wh, wh, imgPig, sndPig);
+        }
+        timeStartGame = TimeUtils.millis();
     }
 
     void sortTableOfRecords(){
