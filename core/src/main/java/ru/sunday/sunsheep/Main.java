@@ -32,8 +32,8 @@ public class Main extends ApplicationAdapter {
     SunButton btnRestart;
     SunButton btnClear;
 
-    Sheep[] sheeps = new Sheep[3];
-    Pig[] pigs = new Pig[2];
+    Sheep[] sheeps = new Sheep[13];
+    Pig[] pigs = new Pig[22];
     Player[] players = new Player[6];
     int countAnimals;
     long timeStartGame;
