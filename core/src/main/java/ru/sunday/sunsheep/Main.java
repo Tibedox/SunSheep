@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 
 public class Main extends ApplicationAdapter {
@@ -20,7 +21,7 @@ public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
-    private BitmapFont font;
+    private BitmapFont font50, font70;
 
     private Texture imgSheep, imgPig;
     private Texture imgBackGround;
@@ -41,7 +42,8 @@ public class Main extends ApplicationAdapter {
         camera = new OrthographicCamera();
         camera.setToOrtho(false, SCR_WIDTH, SCR_HEIGHT);
         touch = new Vector3();
-        font = new BitmapFont(Gdx.files.internal("comic50.fnt"));
+        font50 = new BitmapFont(Gdx.files.internal("fonts/comic50.fnt"));
+        font70 = new BitmapFont(Gdx.files.internal("fonts/comic70.fnt"));
 
         imgBackGround = new Texture("farm.jpg");
         imgSheep = new Texture("sheep0.png");
@@ -102,12 +104,13 @@ public class Main extends ApplicationAdapter {
         batch.draw(imgBackGround, 0, 0, SCR_WIDTH, SCR_HEIGHT);
         for (Sheep s: sheeps) batch.draw(s.img, s.x, s.y, s.width, s.height);
         for (Pig p: pigs) batch.draw(p.img, p.x, p.y, p.width, p.height);
-        font.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
-        font.draw(batch, showTime(timeCurrent), SCR_WIDTH-230, SCR_HEIGHT-10);
+        font50.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
+        font50.draw(batch, showTime(timeCurrent), SCR_WIDTH-230, SCR_HEIGHT-10);
         if(isGameOver){
+            font70.draw(batch, "Game Over", 0, 800, SCR_WIDTH, Align.center, true);
             for (int i = 0; i < players.length-1; i++) {
-                font.draw(batch, players[i].name, 600, 650-i*90);
-                font.draw(batch, showTime(players[i].time), 1000, 650-i*90);
+                font50.draw(batch, players[i].name, 470, 650-i*90);
+                font50.draw(batch, showTime(players[i].time), 900, 650-i*90);
             }
         }
         batch.end();
@@ -121,7 +124,8 @@ public class Main extends ApplicationAdapter {
         imgBackGround.dispose();
         sndSheep.dispose();
         sndPig.dispose();
-        font.dispose();
+        font50.dispose();
+        font70.dispose();
     }
 
     String showTime(long time){
@@ -159,4 +163,6 @@ public class Main extends ApplicationAdapter {
             }
         }
     }
+
+
 }
