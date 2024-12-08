@@ -32,8 +32,8 @@ public class Main extends ApplicationAdapter {
     SunButton btnRestart;
     SunButton btnClear;
 
-    Sheep[] sheeps = new Sheep[33];
-    Pig[] pigs = new Pig[22];
+    Sheep[] sheeps = new Sheep[3];
+    Pig[] pigs = new Pig[2];
     Player[] players = new Player[6];
     int countAnimals;
     long timeStartGame;
@@ -89,6 +89,9 @@ public class Main extends ApplicationAdapter {
             if(isGameOver){
                 if(btnRestart.hit(touch.x, touch.y)){
                     gameRestart();
+                }
+                if(btnClear.hit(touch.x, touch.y)){
+                    clearTableOfRecords();
                 }
             }
         }
@@ -201,5 +204,9 @@ public class Main extends ApplicationAdapter {
             players[i].name = prefs.getString("name"+i, "Noname");
             players[i].time = prefs.getLong("time"+i, 0);
         }
+    }
+
+    void clearTableOfRecords(){
+        for (Player player : players) player.set("Noname", 0);
     }
 }
