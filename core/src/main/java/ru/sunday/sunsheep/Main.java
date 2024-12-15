@@ -18,11 +18,16 @@ public class Main extends ApplicationAdapter {
     public static final float SCR_HEIGHT = 900;
     public static final float SPAWN_SHEEP_X = 580, SPAWN_SHEEP_Y = 426;
     public static final float SPAWN_PIG_X = 876, SPAWN_PIG_Y = 422;
+    public static final int PLAY_GAME = 0;
+    public static final int ENTER_NAME = 1;
+    public static final int GAME_OVER = 2;
 
     private SpriteBatch batch;
     private OrthographicCamera camera;
     private Vector3 touch;
     private BitmapFont font50, font70;
+
+    InputKeyboard keyboard;
 
     private Texture imgSheep, imgPig;
     private Texture imgBackGround;
@@ -32,13 +37,13 @@ public class Main extends ApplicationAdapter {
     SunButton btnRestart;
     SunButton btnClear;
 
-    Sheep[] sheeps = new Sheep[13];
+    Sheep[] sheeps = new Sheep[33];
     Pig[] pigs = new Pig[22];
     Player[] players = new Player[6];
     int countAnimals;
     long timeStartGame;
     long timeCurrent;
-    boolean isGameOver;
+    int stateOfGame;
 
     @Override
     public void create() {
@@ -49,10 +54,12 @@ public class Main extends ApplicationAdapter {
         font50 = new BitmapFont(Gdx.files.internal("fonts/comic50.fnt"));
         font70 = new BitmapFont(Gdx.files.internal("fonts/comic70.fnt"));
 
+        keyboard = new InputKeyboard(font50, SCR_WIDTH, SCR_HEIGHT, 12);
+
         imgBackGround = new Texture("farm.jpg");
         imgSheep = new Texture("sheep0.png");
         imgPig = new Texture("pig0.png");
-        sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep.mp3"));
+        sndSheep = Gdx.audio.newSound(Gdx.files.internal("sound-sheep2.mp3"));
         sndPig = Gdx.audio.newSound(Gdx.files.internal("sound-pig2.mp3"));
 
         btnRestart = new SunButton("Restart", font70, 680, 150);
@@ -71,22 +78,28 @@ public class Main extends ApplicationAdapter {
         if(Gdx.input.justTouched()){
             touch.set(Gdx.input.getX(), Gdx.input.getY(), 0);
             camera.unproject(touch);
-
-            for (Sheep s : sheeps) {
-                if (s.hit(touch.x, touch.y)) {
-                    s.snd.play();
-                    s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
-                    countAnimals++;
+            if(stateOfGame == PLAY_GAME) {
+                for (Sheep s : sheeps) {
+                    if (s.hit(touch.x, touch.y)) {
+                        s.snd.play();
+                        s.catched(SPAWN_SHEEP_X, SPAWN_SHEEP_Y);
+                        countAnimals++;
+                    }
+                }
+                for (Pig p : pigs) {
+                    if (p.hit(touch.x, touch.y)) {
+                        p.snd.play();
+                        p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
+                        countAnimals++;
+                    }
                 }
             }
-            for (Pig p : pigs) {
-                if(p.hit(touch.x, touch.y)){
-                    p.snd.play();
-                    p.catched(SPAWN_PIG_X, SPAWN_PIG_Y);
-                    countAnimals++;
+            if(stateOfGame == ENTER_NAME){
+                if (keyboard.touch(touch.x, touch.y)) {
+                    gameOver(keyboard.getText());
                 }
             }
-            if(isGameOver){
+            if(stateOfGame == GAME_OVER){
                 if(btnRestart.hit(touch.x, touch.y)){
                     gameRestart();
                 }
@@ -99,10 +112,11 @@ public class Main extends ApplicationAdapter {
         // события
         for (Sheep s: sheeps) s.fly();
         for (Pig p: pigs) p.fly();
-        if(!isGameOver) {
+        if(stateOfGame == PLAY_GAME) {
             timeCurrent = TimeUtils.millis() - timeStartGame;
             if(countAnimals == sheeps.length+pigs.length) {
-                gameOver();
+                stateOfGame = ENTER_NAME;
+                keyboard.start();
             }
         }
 
@@ -114,7 +128,10 @@ public class Main extends ApplicationAdapter {
         for (Pig p: pigs) batch.draw(p.img, p.x, p.y, p.width, p.height);
         font50.draw(batch, "SCORE: "+ countAnimals, 10, SCR_HEIGHT-10);
         font50.draw(batch, showTime(timeCurrent), SCR_WIDTH-230, SCR_HEIGHT-10);
-        if(isGameOver){
+        if(stateOfGame == ENTER_NAME){
+            keyboard.draw(batch);
+        }
+        if(stateOfGame == GAME_OVER){
             font70.draw(batch, "Game Over", 0, 800, SCR_WIDTH, Align.center, true);
             for (int i = 0; i < players.length-1; i++) {
                 font50.draw(batch, players[i].name, 470, 650-i*90);
@@ -136,6 +153,7 @@ public class Main extends ApplicationAdapter {
         sndPig.dispose();
         font50.dispose();
         font70.dispose();
+        keyboard.dispose();
     }
 
     String showTime(long time){
@@ -146,15 +164,15 @@ public class Main extends ApplicationAdapter {
         return ""+min/10+min%10+":"+sec/10+sec%10+"."+msec;
     }
 
-    void gameOver(){
-        isGameOver = true;
-        players[players.length-1].set("Winner", timeCurrent);
+    void gameOver(String name){
+        stateOfGame = GAME_OVER;
+        players[players.length-1].set(name, timeCurrent);
         sortTableOfRecords();
         saveTableOfRecords();
     }
 
     void gameRestart(){
-        isGameOver = false;
+        stateOfGame = PLAY_GAME;
         countAnimals = 0;
         for (int i = 0; i < sheeps.length; i++) {
             float wh = MathUtils.random(30, 100);
